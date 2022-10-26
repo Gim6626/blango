@@ -5,9 +5,13 @@ from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from blog.forms import CommentForm
 import logging
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 
 logger = logging.getLogger(__name__)
 
+@cache_page(300)
+@vary_on_headers("Cookie")
 def index(request):
     posts = Post.objects.filter(published_at__lte=timezone.now())
     logger.debug("Got %d posts", len(posts))
